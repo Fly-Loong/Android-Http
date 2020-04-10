@@ -1,5 +1,7 @@
 package cn.com.easyadr.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -40,6 +42,11 @@ public class HttpRequester {
         return this;
     }
 
+    public HttpRequester setCertString(String certFileString) {
+        this.certFileStream = new ByteArrayInputStream(certFileString.getBytes());  ;
+        return this;
+    }
+
     public HttpRequester setCheckHostName(boolean checkHostName) {
         this.checkHostName = checkHostName;
         return this;
@@ -60,6 +67,15 @@ public class HttpRequester {
         return this;
     }
 
+    public void release() {
+        if(certFileStream != null){
+            try {
+                certFileStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @SuppressWarnings("unchecked")
     public <T> T create(Class<T> service) {
         analysisService(service);
